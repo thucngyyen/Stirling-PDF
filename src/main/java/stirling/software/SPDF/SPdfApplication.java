@@ -1,16 +1,21 @@
 package stirling.software.SPDF;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import java.awt.*;
-import java.net.URI;
-
-import jakarta.annotation.PostConstruct;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+import jakarta.annotation.PostConstruct;
+import stirling.software.SPDF.utils.GeneralUtils;
 
 @SpringBootApplication
+//@EnableScheduling
 public class SPdfApplication {
 	
 	@Autowired
@@ -50,6 +55,13 @@ public class SPdfApplication {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
+        GeneralUtils.createDir("customFiles/static/");
+        GeneralUtils.createDir("customFiles/templates/");
+        GeneralUtils.createDir("config");
+        
+        
+        
         System.out.println("Stirling-PDF Started.");
         
         String port = System.getProperty("local.server.port");

@@ -1,6 +1,7 @@
 package stirling.software.SPDF.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +14,7 @@ import java.util.concurrent.Semaphore;
 public class ProcessExecutor {
 
     public enum Processes {
-        LIBRE_OFFICE, OCR_MY_PDF, PYTHON_OPENCV, GHOSTSCRIPT
+        LIBRE_OFFICE, OCR_MY_PDF, PYTHON_OPENCV, GHOSTSCRIPT, WEASYPRINT
     }
 
     private static final Map<Processes, ProcessExecutor> instances = new ConcurrentHashMap<>();
@@ -25,6 +26,7 @@ public class ProcessExecutor {
             case OCR_MY_PDF -> 2;
             case PYTHON_OPENCV -> 8;
             case GHOSTSCRIPT -> 16;
+            case WEASYPRINT -> 16;
             };
             return new ProcessExecutor(semaphoreLimit);
         });
@@ -35,14 +37,22 @@ public class ProcessExecutor {
     private ProcessExecutor(int semaphoreLimit) {
         this.semaphore = new Semaphore(semaphoreLimit);
     }
-
-    public int runCommandWithOutputHandling(List<String> command) throws IOException, InterruptedException {
+    public ProcessExecutorResult runCommandWithOutputHandling(List<String> command) throws IOException, InterruptedException {
+    	return runCommandWithOutputHandling(command, null);
+    }
+    public ProcessExecutorResult runCommandWithOutputHandling(List<String> command, File workingDirectory) throws IOException, InterruptedException {
         int exitCode = 1;
+        String messages = "";
         semaphore.acquire();
         try {
 
             System.out.print("Running command: " + String.join(" ", command));
             ProcessBuilder processBuilder = new ProcessBuilder(command);
+            
+            // Use the working directory if it's set
+            if (workingDirectory != null) {
+                processBuilder.directory(workingDirectory);
+            }
             Process process = processBuilder.start();
 
             // Read the error stream and standard output stream concurrently
@@ -80,14 +90,16 @@ public class ProcessExecutor {
             // Wait for the reader threads to finish
             errorReaderThread.join();
             outputReaderThread.join();
-
+           
             if (outputLines.size() > 0) {
                 String outputMessage = String.join("\n", outputLines);
+                messages += outputMessage;
                 System.out.println("Command output:\n" + outputMessage);
             }
 
             if (errorLines.size() > 0) {
                 String errorMessage = String.join("\n", errorLines);
+                messages += errorMessage;
                 System.out.println("Command error output:\n" + errorMessage);
                 if (exitCode != 0) {
                     throw new IOException("Command process failed with exit code " + exitCode + ". Error message: " + errorMessage);
@@ -96,7 +108,28 @@ public class ProcessExecutor {
         } finally {
             semaphore.release();
         }
-        return exitCode;
+        return new ProcessExecutorResult(exitCode, messages);
     }
-
+    public class ProcessExecutorResult{
+    	int rc;
+    	String messages;
+    	public ProcessExecutorResult(int rc, String messages) {
+    		this.rc = rc;
+    		this.messages = messages;
+    	}
+		public int getRc() {
+			return rc;
+		}
+		public void setRc(int rc) {
+			this.rc = rc;
+		}
+		public String getMessages() {
+			return messages;
+		}
+		public void setMessages(String messages) {
+			this.messages = messages;
+		}
+    	
+    	
+    }
 }

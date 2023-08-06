@@ -1,9 +1,15 @@
 # Build jbig2enc in a separate stage
-FROM frooodle/stirling-pdf-base:latest
+FROM frooodle/stirling-pdf-base:beta4
 
 # Create scripts folder and copy local scripts
 RUN mkdir /scripts
 COPY ./scripts/* /scripts/
+
+#Install fonts
+RUN mkdir /usr/share/fonts/opentype/noto/
+COPY src/main/resources/static/fonts/*.ttf /usr/share/fonts/opentype/noto/
+COPY src/main/resources/static/fonts/*.otf /usr/share/fonts/opentype/noto/
+RUN fc-cache -f -v
 
 # Copy the application JAR file
 COPY build/libs/*.jar app.jar

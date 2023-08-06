@@ -8,6 +8,8 @@
 [![Paypal Donate](https://img.shields.io/badge/Paypal%20Donate-yellow?style=flat&logo=paypal)](https://www.paypal.com/paypalme/froodleplex)
 [![Github Sponser](https://img.shields.io/badge/Github%20Sponsor-yellow?style=flat&logo=github)](https://github.com/sponsors/Frooodle)
 
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/Frooodle/Stirling-PDF/tree/digitalOcean&refcode=c3210994b1af)
+
 This is a powerful locally hosted web based PDF manipulation tool using docker that allows you to perform various operations on PDF files, such as splitting merging, converting, reorganizing, adding images, rotating, compressing, and more. This locally hosted web application started as a 100% ChatGPT-made application and has evolved to include a wide range of features to handle all your PDF needs.
 
 Stirling PDF makes no outbound calls for any record keeping or tracking.
@@ -27,6 +29,11 @@ Feel free to request any features or bug fixes either in github issues or our [D
 - Convert PDFs to and from images
 - Reorganize PDF pages into different orders.
 - Add/Generate signatures
+- Format PDFs into a multi-paged page
+- Scale page contents size by set % 
+- Adjust Contrast
+- Crop PDF
+- Auto Split PDF (With physically scanned page dividers)
 - Flatten PDFs
 - Repair PDFs
 - Detect and remove blank pages
@@ -39,8 +46,14 @@ Feel free to request any features or bug fixes either in github issues or our [D
 - Add watermark(s)
 - Convert Any common file to PDF (using LibreOffice)
 - Convert PDF to Word/Powerpoint/Others (using LibreOffice)
+- Convert HTML to PDF
+- URL to PDF
 - Extract images from PDF
+- Extract images from Scans
+- Add page numbers
+- Auto rename file by detecting PDF header text
 - OCR on PDF (Using OCRMyPDF)
+- PDF/A conversion (Using OCRMyPDF)
 - Edit metadata
 - Dark mode support.
 - Custom download options (see [here](https://github.com/Frooodle/Stirling-PDF/blob/main/images/settings.png) for example)
@@ -86,6 +99,8 @@ docker run -d \
   
   
   Can also add these for customisation but are not required
+  -v /location/of/extraConfigs:/configs \
+  -v /location/of/customFiles:/customFiles \
   -e APP_HOME_NAME="Stirling PDF" \
   -e APP_HOME_DESCRIPTION="Your locally hosted one-stop-shop for all your PDF needs." \
   -e APP_NAVBAR_NAME="Stirling PDF" \
@@ -104,6 +119,7 @@ services:
     volumes:
       - /location/of/trainingData:/usr/share/tesseract-ocr/4.00/tessdata #Required for extra OCR languages
 #      - /location/of/extraConfigs:/configs
+#      - /location/of/customFiles:/customFiles/
 #    environment:
 #      APP_LOCALE: en_GB
 #      APP_HOME_NAME: Stirling PDF
@@ -119,7 +135,7 @@ services:
 Please view https://github.com/Frooodle/Stirling-PDF/blob/main/HowToUseOCR.md
 
 ## Want to add your own language?
-Stirling PDF currently supports
+Stirling PDF currently supports 16!
 - English (English) (en_GB)
 - Arabic (العربية) (ar_AR)
 - German (Deutsch) (de_DE)
@@ -132,6 +148,10 @@ Stirling PDF currently supports
 - Polish (Polski) (pl_PL)
 - Romanian (Română) (ro_RO)
 - Korean (한국어) (ko_KR)
+- Portuguese Brazilian (Português) (pt_BR)
+- Russian (Русский) (ru_RU)
+- Basque (Euskara) (eu_ES)
+- Japanese (日本語) (ja_JP)
 
 If you want to add your own language to Stirling-PDF please refer
 https://github.com/Frooodle/Stirling-PDF/blob/main/HowToAddNewLanguage.md
@@ -156,11 +176,12 @@ Using the same method you can also change
 - Enable/Disable search engine visiblility with ALLOW_GOOGLE_VISIBILITY with true / false values. Default disable visiblility.
 - Change root URI for Stirling-PDF ie change server.com/ to server.com/pdf-app by running APP_ROOT_PATH as pdf-app
 - Disable and remove endpoints and functionality from Stirling-PDF. Currently the endpoints ENDPOINTS_TO_REMOVE and GROUPS_TO_REMOVE can include comma seperated lists of endpoints and groups to disable as example ENDPOINTS_TO_REMOVE=img-to-pdf,remove-pages would disable both image to pdf and remove pages, GROUPS_TO_REMOVE=LibreOffice Would disable all things that use LibreOffice. You can see a list of all endpoints and groups [here](https://github.com/Frooodle/Stirling-PDF/blob/main/groups.md) 
-
+- Change the max file size allowed through the server with the environment variable MAX_FILE_SIZE. default  2000MB
+- Customise static files such as app logo by placing files in the /customFiles/static/ directory. Example to customise app logo is placing a /customFiles/static/favicon.svg to override current SVG. This can be used to change any images/icons/css/fonts/js etc in Stirling-PDF
 
 ## API
 For those wanting to use Stirling-PDFs backend API to link with their own custom scripting to edit PDFs you can view all existing API documentation
-[here](https://app.swaggerhub.com/apis-docs/Frooodle/Stirling-PDF/) or navigate to /swagger-ui/index.html of your stirling-pdf instance for your versions documentation 
+[here](https://app.swaggerhub.com/apis-docs/Frooodle/Stirling-PDF/) or navigate to /swagger-ui/index.html of your stirling-pdf instance for your versions documentation (Or by following the API button in your settings of Stirling-PDF)
 
 
 ## FAQ

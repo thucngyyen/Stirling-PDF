@@ -68,6 +68,9 @@ public class EndpointConfiguration {
         addEndpointToGroup("PageOps", "rotate-pdf");
         addEndpointToGroup("PageOps", "multi-page-layout");
         addEndpointToGroup("PageOps", "scale-pages");
+        addEndpointToGroup("PageOps", "adjust-contrast");
+        addEndpointToGroup("PageOps", "crop");
+        addEndpointToGroup("PageOps", "auto-split-pdf");
         
         // Adding endpoints to "Convert" group
         addEndpointToGroup("Convert", "pdf-to-img");
@@ -80,14 +83,16 @@ public class EndpointConfiguration {
         addEndpointToGroup("Convert", "pdf-to-text");
         addEndpointToGroup("Convert", "pdf-to-html");
         addEndpointToGroup("Convert", "pdf-to-xml");
-
+        addEndpointToGroup("Convert", "html-to-pdf");
+        addEndpointToGroup("Convert", "url-to-pdf");
+        
         // Adding endpoints to "Security" group
         addEndpointToGroup("Security", "add-password");
         addEndpointToGroup("Security", "remove-password");
         addEndpointToGroup("Security", "change-permissions");
         addEndpointToGroup("Security", "add-watermark");
         addEndpointToGroup("Security", "cert-sign");
-        
+        addEndpointToGroup("Security", "sanitize-pdf");
         
 
         // Adding endpoints to "Other" group
@@ -102,9 +107,8 @@ public class EndpointConfiguration {
         addEndpointToGroup("Other", "repair");
         addEndpointToGroup("Other", "remove-blanks");
         addEndpointToGroup("Other", "compare");
-        
-        
-        
+        addEndpointToGroup("Other", "add-page-numbers");
+        addEndpointToGroup("Other", "auto-rename");
         
         
         
@@ -123,12 +127,15 @@ public class EndpointConfiguration {
         addEndpointToGroup("CLI", "pdf-to-html");
         addEndpointToGroup("CLI", "pdf-to-xml");
         addEndpointToGroup("CLI", "ocr-pdf");
+        addEndpointToGroup("CLI", "html-to-pdf");
+        addEndpointToGroup("CLI", "url-to-pdf");
+        
         
         //python
         addEndpointToGroup("Python", "extract-image-scans");
         addEndpointToGroup("Python", "remove-blanks");
-        
-  
+        addEndpointToGroup("Python", "html-to-pdf");
+        addEndpointToGroup("Python", "url-to-pdf");
         
         //openCV
         addEndpointToGroup("OpenCV", "extract-image-scans");
@@ -168,12 +175,18 @@ public class EndpointConfiguration {
         addEndpointToGroup("Java", "cert-sign");
         addEndpointToGroup("Java", "multi-page-layout");
         addEndpointToGroup("Java", "scale-pages");
-        
+        addEndpointToGroup("Java", "add-page-numbers");
+        addEndpointToGroup("Java", "auto-rename");
+        addEndpointToGroup("Java", "auto-split-pdf");
+        addEndpointToGroup("Java", "sanitize-pdf");
+        addEndpointToGroup("Java", "crop");
         
         //Javascript
         addEndpointToGroup("Javascript", "pdf-organizer");
         addEndpointToGroup("Javascript", "sign");
         addEndpointToGroup("Javascript", "compare");
+        addEndpointToGroup("Javascript", "adjust-contrast");
+        
         
     }
                 

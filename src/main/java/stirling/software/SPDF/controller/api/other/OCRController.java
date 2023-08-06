@@ -27,10 +27,13 @@ import org.springframework.web.multipart.MultipartFile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import stirling.software.SPDF.utils.ProcessExecutor;
+import stirling.software.SPDF.utils.ProcessExecutor.ProcessExecutorResult;
 import stirling.software.SPDF.utils.WebResponseUtils;
 
 @RestController
+@Tag(name = "Other", description = "Other APIs")
 public class OCRController {
 
     private static final Logger logger = LoggerFactory.getLogger(OCRController.class);
@@ -47,7 +50,7 @@ public class OCRController {
 
     @PostMapping(consumes = "multipart/form-data", value = "/ocr-pdf")
     @Operation(summary = "Process a PDF file with OCR",
-            description = "This endpoint processes a PDF file using OCR (Optical Character Recognition). Users can specify languages, sidecar, deskew, clean, cleanFinal, ocrType, ocrRenderType, and removeImagesAfter options.")
+            description = "This endpoint processes a PDF file using OCR (Optical Character Recognition). Users can specify languages, sidecar, deskew, clean, cleanFinal, ocrType, ocrRenderType, and removeImagesAfter options. Input:PDF Output:PDF Type:SI-Conditional")
     public ResponseEntity<byte[]> processPdfWithOCR(
             @RequestPart(required = true, value = "fileInput")
             @Parameter(description = "The input PDF file to be processed with OCR")
@@ -139,8 +142,12 @@ public class OCRController {
         command.addAll(Arrays.asList("--language", languageOption, tempInputFile.toString(), tempOutputFile.toString()));
 
         // Run CLI command
-        int returnCode = ProcessExecutor.getInstance(ProcessExecutor.Processes.OCR_MY_PDF).runCommandWithOutputHandling(command);
-
+        ProcessExecutorResult result = ProcessExecutor.getInstance(ProcessExecutor.Processes.OCR_MY_PDF).runCommandWithOutputHandling(command);
+        if(result.getRc() != 0 && result.getMessages().contains("multiprocessing/synchronize.py") && result.getMessages().contains("OSError: [Errno 38] Function not implemented")) {
+        	command.add("--jobs");
+        	command.add("1");
+        	result = ProcessExecutor.getInstance(ProcessExecutor.Processes.OCR_MY_PDF).runCommandWithOutputHandling(command);
+        }
         
 
         
@@ -151,7 +158,7 @@ public class OCRController {
 
             List<String> gsCommand = Arrays.asList("gs", "-sDEVICE=pdfwrite", "-dFILTERIMAGE", "-o", tempPdfWithoutImages.toString(), tempOutputFile.toString());
 
-            int gsReturnCode = ProcessExecutor.getInstance(ProcessExecutor.Processes.GHOSTSCRIPT).runCommandWithOutputHandling(gsCommand);
+            ProcessExecutor.getInstance(ProcessExecutor.Processes.GHOSTSCRIPT).runCommandWithOutputHandling(gsCommand);
             tempOutputFile = tempPdfWithoutImages;
         }
         // Read the OCR processed PDF file

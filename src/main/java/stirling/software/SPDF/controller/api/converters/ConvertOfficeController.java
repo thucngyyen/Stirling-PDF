@@ -17,10 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import stirling.software.SPDF.utils.ProcessExecutor;
+import stirling.software.SPDF.utils.ProcessExecutor.ProcessExecutorResult;
 import stirling.software.SPDF.utils.WebResponseUtils;
 
 @RestController
+@Tag(name = "Convert", description = "Convert APIs")
 public class ConvertOfficeController {
 
     public byte[] convertToPdf(MultipartFile inputFile) throws IOException, InterruptedException {
@@ -39,7 +42,7 @@ public class ConvertOfficeController {
 
         // Run the LibreOffice command
         List<String> command = new ArrayList<>(Arrays.asList("unoconv", "-vvv", "-f", "pdf", "-o", tempOutputFile.toString(), tempInputFile.toString()));
-        int returnCode = ProcessExecutor.getInstance(ProcessExecutor.Processes.LIBRE_OFFICE).runCommandWithOutputHandling(command);
+        ProcessExecutorResult returnCode = ProcessExecutor.getInstance(ProcessExecutor.Processes.LIBRE_OFFICE).runCommandWithOutputHandling(command);
 
         // Read the converted PDF file
         byte[] pdfBytes = Files.readAllBytes(tempOutputFile);
@@ -57,13 +60,13 @@ public class ConvertOfficeController {
 
     @PostMapping(consumes = "multipart/form-data", value = "/file-to-pdf")
     @Operation(
-        summary = "Convert a file to a PDF using OCR",
-        description = "This endpoint converts a given file to a PDF using Optical Character Recognition (OCR). The filename of the resulting PDF will be the original filename with '_convertedToPDF.pdf' appended."
+        summary = "Convert a file to a PDF using LibreOffice",
+        description = "This endpoint converts a given file to a PDF using LibreOffice API  Input:Any Output:PDF Type:SISO"
     )
-    public ResponseEntity<byte[]> processPdfWithOCR(
+    public ResponseEntity<byte[]> processFileToPDF(
         @RequestPart(required = true, value = "fileInput")
         @Parameter(
-            description = "The input file to be converted to a PDF file using OCR",
+            description = "The input file to be converted to a PDF file using LibreOffice",
             required = true
         )
             MultipartFile inputFile

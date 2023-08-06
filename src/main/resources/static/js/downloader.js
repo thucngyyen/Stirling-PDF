@@ -14,6 +14,13 @@ $(document).ready(function() {
 		const url = this.action;
 		const files = $('#fileInput-input')[0].files;
 		const formData = new FormData(this);
+        
+        // Remove empty file entries
+        for (let [key, value] of formData.entries()) {
+            if (value instanceof File && !value.name) {
+                formData.delete(key);
+            }
+        }
 		const override = $('#override').val() || '';
 		const originalButtonText = $('#submitBtn').text();
 		$('#submitBtn').text('Processing...');
@@ -154,11 +161,26 @@ async function submitMultiPdfForm(url, files) {
 	if (zipFiles) {
 		jszip = new JSZip();
 	}
-
+	
+	
+	// Get the form with the method attribute set to POST
+	let postForm = document.querySelector('form[method="POST"]');
+	
 	// Get existing form data
-	let formData = new FormData($('form')[0]);
+	let formData;
+	if (postForm) {
+	    formData = new FormData($(postForm)[0]);  // Convert the form to a jQuery object and get the raw DOM element
+	} else {
+	    console.log("No form with POST method found.");
+	}
+	//Remove file to reuse parameters for other runs
 	formData.delete('fileInput');
-
+    // Remove empty file entries
+    for (let [key, value] of formData.entries()) {
+        if (value instanceof File && !value.name) {
+            formData.delete(key);
+        }
+    }
 	const CONCURRENCY_LIMIT = 8;
 	const chunks = [];
 	for (let i = 0; i < Array.from(files).length; i += CONCURRENCY_LIMIT) {
@@ -169,10 +191,11 @@ async function submitMultiPdfForm(url, files) {
 		const promises = chunk.map(async file => {
 			let fileFormData = new FormData();
 			fileFormData.append('fileInput', file);
-
+			console.log(fileFormData); 
 			// Add other form data
 			for (let pair of formData.entries()) {
 				fileFormData.append(pair[0], pair[1]);
+				console.log(pair[0]+ ', ' + pair[1]); 
 			}
 
 			try {

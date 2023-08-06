@@ -5,9 +5,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller
+@Tag(name = "Security", description = "Security APIs")
 public class SecurityWebController {
+	
+	
     @GetMapping("/add-password")
     @Hidden
     public String addPasswordForm(Model model) {
@@ -40,5 +44,12 @@ public class SecurityWebController {
     public String certSignForm(Model model) {
         model.addAttribute("currentPage", "cert-sign");
         return "security/cert-sign";
+    }
+    
+    @GetMapping("/sanitize-pdf")
+    @Hidden
+    public String sanitizeForm(Model model) {
+        model.addAttribute("currentPage", "sanitize-pdf");
+        return "security/sanitize-pdf";
     }
 }

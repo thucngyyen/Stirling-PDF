@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller
+@Tag(name = "Other", description = "Other APIs")
 public class OtherWebController {
     @GetMapping("/compress-pdf")
     @Hidden
@@ -30,6 +32,13 @@ public class OtherWebController {
         return modelAndView;
     }
 
+    @GetMapping("/add-page-numbers")
+    @Hidden
+    public String addPageNumbersForm(Model model) {
+        model.addAttribute("currentPage", "add-page-numbers");
+        return "other/add-page-numbers";
+    }
+    
     @GetMapping("/extract-images")
     @Hidden
     public String extractImagesForm(Model model) {
@@ -130,5 +139,14 @@ public class OtherWebController {
         model.addAttribute("currentPage", "auto-crop");
         return "other/auto-crop";
     }
+    
+    @GetMapping("/auto-rename")
+    @Hidden
+    public String autoRenameForm(Model model) {
+        model.addAttribute("currentPage", "auto-rename");
+        return "other/auto-rename";
+    }
+    
+
     
 }
